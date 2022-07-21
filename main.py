@@ -14,20 +14,28 @@ if st.button("Process"):
         file_name = file_name[:size-5]
         st.write(file_name)
         raw_text = docx2txt.process(docx_file)
+        
         #st.write(raw_text)
         #st.write("\n")
         txt = st.text_area("Text to Edit",raw_text)
+        text = txt.encode('latin-1', 'replace').decode('latin-1')
+        file = open("data.txt","w")
+        file.write(text)
+        file.close()
 
+        f = open("data.txt", "r")
         pdf = FPDF()
         pdf.add_page()
-        pdf.set_font("Arial", size = 15)
-        pdf.cell(200, 10, txt = txt, ln = 1, align = 'L')
+        pdf.set_font("Arial", size=12)
+        for x in f:
+            pdf.multi_cell(190 ,10, x,align="L")
+
         pdf.output("example.pdf")
+
         with open("example.pdf", "rb") as pdf_file:
             PDFbyte = pdf_file.read()
 
         st.download_button(label="Download PDF", 
-                data=PDFbyte,
+                data = PDFbyte,
                 file_name=file_name + ".pdf",
                 mime='application/octet-stream')
-
